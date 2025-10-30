@@ -69,3 +69,48 @@ def raices_cuadradas(a, n):
         if (x * x) % n == a:
             resultado.append(x)
     return resultado
+
+# 9) Cuadrados perfectos en Z_n: lista de a tales que a = x^2 (mod n) para algún x
+def cuadrados_perfectos(n):
+    validar_modulo(n)
+    cuadrados = set()
+    for x in range(n):
+        # Calcula x^2 mod n
+        cuadrado = (x * x) % n
+        cuadrados.add(cuadrado)
+    # Convierte el set a una lista ordenada para la presentación
+    return sorted(list(cuadrados))
+
+# 10) Potencia modular: (base ** exponente) mod n
+def potencia_modular(base, exponente, n):
+    validar_modulo(n)
+    # Validamos que la base esté en Z_n
+    validar_elemento(base, n) 
+    if not isinstance(exponente, int):
+        raise ValueError("El exponente debe ser un entero.")
+    # El exponente puede ser >= n o negativo; 'pow' lo maneja eficientemente.
+    # pow(base, exponente, n) calcula (base ** exponente) % n
+    return pow(base, exponente, n)
+
+# 11) Cifrado Afín: C = (a*x + b) mod m
+def cifrar_afin(mensaje, a, b):
+    CARACTERES = "a b c d e f g h i j k l m n o p q r s t u v w x y z á é í ó ú ü esp ! ? A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Á É Í Ó Ú Ü"
+    LISTA_CARACTERES = CARACTERES.split(' ') # Split por espacio para manejar 'esp'
+    MODULO_CIFRADO = len(LISTA_CARACTERES)
+    # m es el tamaño del alfabeto (MODULO_CIFRADO)
+    n = MODULO_CIFRADO
+    
+    # 1. Validar 'a': debe ser coprimo con n para que exista el inverso para descifrar
+    g, _, _ = egcd(a, n)
+    if g != 1:
+        raise ValueError(f"El coeficiente 'a' ({a}) NO es coprimo con {n}. No se podrá descifrar.")
+    
+    # 2. Validar 'b' y 'a' como enteros
+    if not isinstance(a, int) or not isinstance(b, int):
+        raise ValueError("Los coeficientes 'a' y 'b' deben ser enteros.")
+
+    mensaje_cifrado = ""
+    for char in mensaje:
+        if char == ' ':
+            # El espacio en blanco es la palabra clave 'esp'
+            posicion = LISTA_CARACTERES.index('esp')
