@@ -95,22 +95,102 @@ def potencia_modular(base, exponente, n):
 # 11) Cifrado Afín: C = (a*x + b) mod m
 def cifrar_afin(mensaje, a, b):
     CARACTERES = "a b c d e f g h i j k l m n o p q r s t u v w x y z á é í ó ú ü esp ! ? A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Á É Í Ó Ú Ü"
-    LISTA_CARACTERES = CARACTERES.split(' ') # Split por espacio para manejar 'esp'
-    MODULO_CIFRADO = len(LISTA_CARACTERES)
-    # m es el tamaño del alfabeto (MODULO_CIFRADO)
-    n = MODULO_CIFRADO
-    
-    # 1. Validar 'a': debe ser coprimo con n para que exista el inverso para descifrar
+    LISTA_CARACTERES = CARACTERES.split(' ')
+    n = len(LISTA_CARACTERES)
+
     g, _, _ = egcd(a, n)
     if g != 1:
-        raise ValueError(f"El coeficiente 'a' ({a}) NO es coprimo con {n}. No se podrá descifrar.")
-    
-    # 2. Validar 'b' y 'a' como enteros
-    if not isinstance(a, int) or not isinstance(b, int):
-        raise ValueError("Los coeficientes 'a' y 'b' deben ser enteros.")
+        raise ValueError(f"El coeficiente 'a' ({a}) NO es primo relativo con {n}. No se podrá descifrar")
 
     mensaje_cifrado = ""
     for char in mensaje:
         if char == ' ':
-            # El espacio en blanco es la palabra clave 'esp'
+            # Los espacios se codifican como 'esp'
             posicion = LISTA_CARACTERES.index('esp')
+        else:
+            if char not in LISTA_CARACTERES:
+                raise ValueError(f"Carácter '{char}' no está en el alfabeto")
+            posicion = LISTA_CARACTERES.index(char)
+        # Fórmula del cifrado afín
+        cifrado_pos = (a * posicion + b) % n
+        mensaje_cifrado += LISTA_CARACTERES[cifrado_pos]
+    return mensaje_cifrado
+
+
+while True:
+    print("\n--->> CALCULADORA DE OPERACIONES MODULARES <<---")
+    print("1. Suma modular")
+    print("2. Producto modular")
+    print("3. División modular")
+    print("4. Inverso modular")
+    print("5. Potencia modular")
+    print("6. Raíces cuadradas modulares")
+    print("7. Cuadrados perfectos")
+    print("8. Cifrado Afín")
+    print("9. Salir")
+    
+    opcion = input("Seleccione una opción: ")
+
+    try:
+        # Opción 1: Suma modular
+        if opcion == '1':
+            a = int(input("a = "))
+            b = int(input("b = "))
+            n = int(input("n = "))
+            print(f"Resultado: {(a + b) % n}")
+        
+        # Opción 2: Producto modular
+        elif opcion == '2':
+            a = int(input("a = "))
+            b = int(input("b = "))
+            n = int(input("n = "))
+            print(f"Resultado: {(a * b) % n}")
+
+        # Opción 3: División modular
+        elif opcion == '3':
+            a = int(input("a = "))
+            b = int(input("b = "))
+            n = int(input("n = "))
+            print(f"Resultado: {division_modular(a, b, n)}")
+        
+        # Opción 4: Inverso modular
+        elif opcion == '4':
+            a = int(input("a = "))
+            n = int(input("n = "))
+            print(f"Inverso de {a} en Z_{n}: {inverso_modular(a, n)}")
+        
+        # Opción 5: Potencia modular
+        elif opcion == '5':
+            base = int(input("Base = "))
+            exp = int(input("Exponente = "))
+            n = int(input("n = "))
+            print(f"Resultado: {potencia_modular(base, exp, n)}")
+
+        # Opción 6: Raíces cuadradas modulares
+        elif opcion == '6':
+            a = int(input("a = "))
+            n = int(input("n = "))
+            print(f"Raíces cuadradas de {a} en Z_{n}: {raices_cuadradas(a, n)}")
+
+        # Opción 7: Cuadrados perfectos
+        elif opcion == '7':
+            n = int(input("n = "))
+            print(f"Cuadrados perfectos en Z_{n}: {cuadrados_perfectos(n)}")
+
+        # Opción 8: Cifrado afín
+        elif opcion == '8':
+            mensaje = input("Mensaje: ")
+            a = int(input("a = "))
+            b = int(input("b = "))
+            print(f"Mensaje cifrado: {cifrar_afin(mensaje, a, b)}")
+
+        # Opción 9: Salir
+        elif opcion == '9':
+            print("Hasta luego 👋")
+            break
+
+        else:
+            print("Opción no válida. Intente de nuevo.")
+
+    except ValueError as e:
+        print(f"Error: {e}")
